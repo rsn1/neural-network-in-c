@@ -5,9 +5,9 @@
 
 
 #define N_SAMPLES 20
+#define N_LAYERS 3
 
-
-int n_nodes = [4,6,4];
+int n_nodes[N_LAYERS] = {4,6,4};
 
 //B,F ... N,F
 //create_net(n_hidden,)
@@ -27,7 +27,7 @@ typedef struct {
     Node *nodes;
 } Layer;
 
-
+Layer *network;
 
 int main(void) 
 {
@@ -38,7 +38,11 @@ int main(void)
     float res = sigmoid(x);
     printf("%f \n",res);
 
-    Layer p;
+    printf("%f \n",relu(x));
+    x = -2.0;
+    printf("%f",relu(x));
+
+    create_network(network);
 
 
     return 0;
@@ -46,9 +50,37 @@ int main(void)
 
 
 //n_nodes: array of ints describing number of nodes per layer
-void malloc_network(int n_nodes[], int n_layers)
+void create_network(Layer *network)
 {
-    
+    network = malloc(N_LAYERS*sizeof(Layer));
+    for (int i = 0; i < N_LAYERS; ++i) {
+        network[i].n_nodes = n_nodes[i];
+        network[i].nodes = malloc(n_nodes[i] * sizeof(int));
+        for (int j = 0; j < n_nodes[i]; ++j) {
+            network[i].nodes[j].value = 0;
+            network[i].nodes[j].bias = 0;
+        }
+    }
+}
+
+void free_network(Layer *network)
+{
+    for (int i = 0; i < N_LAYERS; ++i) {
+        free(network[i].nodes);
+    }
+    free(network);
 }
 
 
+void forward(void)
+{
+    for (int i = 0; i < N_LAYERS; ++i) {
+        for (int j = 0; j < n_nodes[i]; ++j) {
+
+
+
+
+
+        }
+    }
+}

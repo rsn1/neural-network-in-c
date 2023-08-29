@@ -14,3 +14,8 @@ float mse(float *a, float *b, int size)
 	}
 	return error / size;
 }
+
+float relu(float x)
+{
+    return x < 0 ? 0 : x;
+}
