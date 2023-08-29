@@ -7,4 +7,6 @@ float mse(float a[], float b[], int size);
 
 float relu(float x);
 
+float frand(float a);
+
 #endif
