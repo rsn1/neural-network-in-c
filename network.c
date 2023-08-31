@@ -37,6 +37,7 @@ Network network_alloc(int n_nodes[], int n_weights)
 void network_forward(Network *net, Matrix *input)
 {
     assert(input->rows==net->weights[0].cols);
+    //input -> first hidden layer
     matrix_mul(&net->outputs[0],&net->weights[0],input); //o = Wx
     matrix_add(&net->outputs[0],&net->outputs[0],&net->biases[0]); //o = o + b
     matrix_act_func(&net->outputs[0],&net->outputs[0],relu); //o = act(o)
