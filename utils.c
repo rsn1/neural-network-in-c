@@ -22,8 +22,7 @@ float relu(float x)
     return x < 0 ? 0 : x;
 }
 
-float frand(float a)
+float frand(void)
 {
-    float x = (float)rand()/(float)(RAND_MAX/a);
-    return x;
+    return (float) rand() / (float) RAND_MAX;
 }
