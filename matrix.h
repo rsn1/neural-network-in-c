@@ -15,5 +15,6 @@ void matrix_rand(Matrix *out, float low, float high);
 void matrix_print(Matrix *m);
 void matrix_add(Matrix *out, Matrix *w, Matrix *x);
 void matrix_act_func(Matrix *out, Matrix *m, float (*activation)(float));
+void matrix_elem_mul(Matrix *out, Matrix *w, Matrix *x);
 
 #endif

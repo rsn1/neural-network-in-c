@@ -1,9 +1,9 @@
-#include "matrix.h"
 #include <stdlib.h>
 #include <math.h>
-#include "utils.h"
 #include <assert.h>
 #include <stdio.h>
+#include "utils.h"
+#include "matrix.h"
 
 Matrix matrix_alloc(int rows, int cols)
 {
@@ -16,6 +16,7 @@ Matrix matrix_alloc(int rows, int cols)
    return m;
 }
 
+//elementwise activation function
 void matrix_act_func(Matrix *out, Matrix *m, float (*activation)(float))
 {
     assert(out->cols == m->cols);
@@ -30,7 +31,7 @@ void matrix_act_func(Matrix *out, Matrix *m, float (*activation)(float))
 void matrix_add(Matrix *out, Matrix *w, Matrix *x)
 {
     assert(w->cols==x->cols);
-    assert(w->rows==x->cols);
+    assert(w->rows==x->rows);
     assert(out->cols==w->cols);
     assert(out->rows==w->rows);
     for (int i = 0; i < out->rows; ++i) {
@@ -42,7 +43,7 @@ void matrix_add(Matrix *out, Matrix *w, Matrix *x)
 
 void matrix_mul(Matrix *out, Matrix *w, Matrix *x) 
 {
-    // W (d,n) @ x (n,p) -> out (d,p)
+    // w (d,n) @ x (n,p) -> out (d,p)
     assert(out->cols == x->cols);
     assert(out->rows == w->rows);
     assert(w->cols == x->rows);
@@ -53,6 +54,20 @@ void matrix_mul(Matrix *out, Matrix *w, Matrix *x)
             for (int k = 0; k < n; ++k) {
                 MAT_IDX(out,i,j) += MAT_IDX(w,i,k) * MAT_IDX(x,k,j);
             }
+        }
+    }
+}
+
+void matrix_elem_mul(Matrix *out, Matrix *w, Matrix *x) 
+{
+    // w (d,n) * x (d,n) -> out (d,n)
+    assert(w->cols==x->cols);
+    assert(w->rows==x->rows);
+    assert(out->cols==w->cols);
+    assert(out->rows==w->rows);
+    for (int i = 0; i < out->rows; ++i) {
+        for (int j = 0; j < out->cols; ++j) {
+            MAT_IDX(out,i,j) = MAT_IDX(w,i,j) * MAT_IDX(x,i,j);
         }
     }
 }
