@@ -1,2 +1,2 @@
-# nn_in_c
+# neural nets in c
 Matrix and neural network library implementation in C.
