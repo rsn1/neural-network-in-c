@@ -110,13 +110,13 @@ void matrix_transpose(Matrix *out, Matrix *m)
     }
 }
 
-void mse(Matrix *out, Matrix *a, Matrix *b)
+void matrix_mse(Matrix *out, Matrix *output, Matrix *label)
 {
-	assert(a->cols == b->cols);
-	assert(a->rows == b->rows);
-    assert(out->cols == b->cols);
-    assert(out->rows == b->rows);
-	matrix_sub(out,a,b);
+	assert(output->cols == label->cols);
+	assert(output->rows == label->rows);
+    assert(out->cols == label->cols);
+    assert(out->rows == label->rows);
+	matrix_sub(out,output,label);
     for (int i = 0; i < out->rows; ++i) {
         for (int j = 0; j < out->cols; ++j) {
             MAT_IDX(out,i,j) = powf(MAT_IDX(out,i,j),2);

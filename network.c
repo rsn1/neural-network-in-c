@@ -3,7 +3,7 @@
 #include "utils.h"
 #include "network.h"
 #include "matrix.h"
-
+#include <stdio.h>
 #define LEARNING_RATE 0.3
 
 Network network_alloc(int n_nodes[], int n_weights)
@@ -64,6 +64,7 @@ void network_free(Network *net)
 
 void network_forward(Network *net, Matrix *input)
 {
+    printf("Forward pass\n");
     assert(input->rows==net->weights[0].cols);
     //input -> first hidden layer
     matrix_mul(&net->outputs[0],&net->weights[0],input); //o = Wx
@@ -81,13 +82,32 @@ void network_forward(Network *net, Matrix *input)
 //calculate gradients, update weights
 void network_backward(Network *net, Matrix* label)
 {
-    //x3
-  //  Matrix net_out = net->outputs[net->size-1];
-    //
-   // Matrix d_out = mse(&net_out,label);
-   // delta_3
-   // net->outputs[net->size]
+    printf("Backward pass\n");
+    Matrix net_out = net->outputs[net->size-1];
+    assert(net_out.rows == label->rows);
+    assert(net_out.cols == label->cols);
+    Matrix delta_l = matrix_alloc(net_out.rows,net_out.cols);
+    Matrix rhs = matrix_alloc(net_out.rows,net_out.cols);
+    matrix_sub(&delta_l,&net_out,label);
+    //calculate last output without act func for weight update
+    matrix_mul(&rhs,&net->weights[net->size-1],&net->outputs[net->size-2]);
+    matrix_elem_func(&rhs,&rhs,relu_d);
+    matrix_elem_mul(&delta_l,&delta_l,&rhs);
+
+    Matrix x2t = matrix_alloc(net->outputs[net->size-2].cols,net->outputs[net->size-2].rows);
+    matrix_transpose(&x2t,&net->outputs[net->size-2]);
+    Matrix dedw = matrix_alloc(net->weights[net->size-1].rows,net->weights[net->size-1].cols);
+    matrix_mul(&dedw,&delta_l,&x2t);
+    
+   
+
+    matrix_free(&delta_l);
+    matrix_free(&rhs);
+    matrix_free(&x2t);
 }
+
+
+
 void network_train(Network* net, Matrix *input) {
     network_forward(net,input);
 }

@@ -66,6 +66,11 @@ int main(void)
     matrix_print(&net.outputs[2]);
     printf("-------- \n");
     // //N_WEIGHTS-1
+    Matrix labels = matrix_alloc(2,1);
+    matrix_set_elem(&labels,0,0,1);
+    matrix_set_elem(&labels,1,0,2);
+
+    network_backward(&net,&labels);
     // network_free(&net);
     return 0;
 }

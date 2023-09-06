@@ -19,7 +19,7 @@ void matrix_elem_func(Matrix *out, Matrix *m, float (*activation)(float));
 void matrix_elem_mul(Matrix *out, Matrix *w, Matrix *x);
 void matrix_free(Matrix * m);
 void matrix_transpose(Matrix *out, Matrix *m);
-void matrix_mse(Matrix *out, Matrix *m);
+void matrix_mse(Matrix *out, Matrix *output, Matrix *label);
 void matrix_set_elem(Matrix *m, int row, int col, float val);
 
 #endif
