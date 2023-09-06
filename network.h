@@ -5,6 +5,8 @@
 typedef struct Network {
     Matrix *biases;
     Matrix *weights;
+    Matrix *d_biases;
+    Matrix *d_weights;
     Matrix *outputs;
     int size;
 } Network;
@@ -12,6 +14,7 @@ typedef struct Network {
 Network network_alloc(int n_nodes[], int n_weights);
 void network_forward(Network *net, Matrix *input);
 void network_free(Network *net);
-void network_backward(Network *net);
+void network_backward(Network *net, Matrix *label);
+void network_train(Network* net, Matrix *input);
 
 #endif

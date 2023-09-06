@@ -7,9 +7,9 @@
 #include "network.h"
 
 #define N_SAMPLES 20
-#define N_LAYERS 3 //number of layers
-#define N_WEIGHTS N_LAYERS-1
+#define N_LAYERS 4
 
+//B,F
 //wih 1 input : Wx+b ->  W : 4x1 ; x: 1x1  -> Wx = 4x1
 //wih 2 inputs : Wx +b -> W: 4x2 ; x : 2x1 -> Wx = 4x1
 //who : Wx+b -> W 1x4 x: 4x1
@@ -34,17 +34,22 @@ int main(void)
     matrix_print(&d);
     printf("------ \n");
     printf("d matrix after relu \n");
-    matrix_act_func(&d,&d,relu);
+    matrix_elem_func(&d,&d,relu);
     matrix_print(&d);
     printf("------ \n");
   
     //network tests
     //n_nodes: array of ints describing number of nodes per layer
-    int n_nodes[N_LAYERS] = {1,4,1};
-    Network net = network_alloc(n_nodes,N_WEIGHTS);
+    int n_nodes[N_LAYERS] = {4,5,3,2};
+    Network net = network_alloc(n_nodes,N_LAYERS-1);
 
-    Matrix input = matrix_alloc(1,1);
-    input.data[0] = 1.0;
+    Matrix input = matrix_alloc(4,1);
+    matrix_set_elem(&input,0,0,1);
+    matrix_set_elem(&input,1,0,2);
+    matrix_set_elem(&input,2,0,3);
+    matrix_set_elem(&input,3,0,4);
+    printf("Input: \n");
+    matrix_print(&input);
 
     network_forward(&net,&input);
     printf("First weight matrix: \n");
@@ -54,9 +59,14 @@ int main(void)
     printf("First output matrix: \n");
     matrix_print(&net.outputs[0]);
     printf("-------- \n");
+    printf("Second output matrix: \n");
     matrix_print(&net.outputs[1]);
-    //N_WEIGHTS-1
-    network_free(&net);
+    printf("-------- \n");
+    printf("Last output matrix: \n");
+    matrix_print(&net.outputs[2]);
+    printf("-------- \n");
+    // //N_WEIGHTS-1
+    // network_free(&net);
     return 0;
 }
 

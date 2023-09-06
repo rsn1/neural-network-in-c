@@ -1,8 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
+#include "matrix.h"
 
 float sigmoid(float x);
-float mse(float *a, float *b, int size);
 float relu(float x);
 float frand(void);
 
