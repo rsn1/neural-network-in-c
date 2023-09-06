@@ -91,6 +91,15 @@ void matrix_elem_mul(Matrix *out, Matrix *w, Matrix *x)
     }
 }
 
+void matrix_copy(Matrix *out, Matrix *m)
+{
+    for (int i = 0; i < out->rows; ++i) {
+        for (int j = 0; j < out->cols; j++) {
+            MAT_IDX(out,i,j) = MAT_IDX(m,i,j);
+        }
+    }
+}
+
 void matrix_rand(Matrix *out, float low, float high)
 {
     for (int i = 0; i < out->rows; ++i) {

@@ -50,20 +50,20 @@ int main(void)
     matrix_set_elem(&input,3,0,4);
     printf("Input: \n");
     matrix_print(&input);
-
+    
     network_forward(&net,&input);
     printf("First weight matrix: \n");
     matrix_print(&net.weights[0]);
     printf("First bias matrix: \n");
     matrix_print(&net.biases[0]);
     printf("First output matrix: \n");
-    matrix_print(&net.outputs[0]);
+    matrix_print(&net.outputs[1]);
     printf("-------- \n");
     printf("Second output matrix: \n");
     matrix_print(&net.outputs[1]);
     printf("-------- \n");
     printf("Last output matrix: \n");
-    matrix_print(&net.outputs[2]);
+    matrix_print(&net.outputs[net.size]);
     printf("-------- \n");
     // //N_WEIGHTS-1
     Matrix labels = matrix_alloc(2,1);
