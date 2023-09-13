@@ -15,6 +15,6 @@ Network network_alloc(int n_nodes[], int n_weights);
 void network_forward(Network *net, Matrix *input);
 void network_free(Network *net);
 void network_backward(Network *net, Matrix *label);
-void network_train(Network* net, Matrix *input);
+void network_step(Network *net);
 
 #endif

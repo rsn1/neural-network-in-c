@@ -93,8 +93,10 @@ void network_backward(Network *net, Matrix* label)
 
     Matrix x2t = matrix_alloc(net->outputs[net->size-1].cols,net->outputs[net->size-1].rows);
     matrix_transpose(&x2t,&net->outputs[net->size-1]);
-    Matrix dedw = matrix_alloc(net->weights[net->size-1].rows,net->weights[net->size-1].cols);
-    matrix_mul(&dedw,&delta_l,&x2t);
+    Matrix dedw3 = matrix_alloc(net->weights[net->size-1].rows,net->weights[net->size-1].cols);
+    matrix_mul(&dedw3,&delta_l,&x2t);
+    net->d_weights[net->size-1] = dedw3;
+
 
     Matrix deltas[net->size]; //0,1,2
     deltas[net->size-1] = delta_l;
@@ -102,14 +104,20 @@ void network_backward(Network *net, Matrix* label)
         Matrix delta_i = matrix_alloc(net->weights[i+1].rows,1);
         Matrix rhs_i = matrix_alloc(net->weights[i].rows,1);
         Matrix w_t = matrix_alloc(net->weights[i+1].cols,net->weights[i+1].rows);
-        matrix_transpose(&w_t,&net->weights[i+1]);
-        matrix_mul(&delta_i,&w_t,&deltas[i+1]); //w_t+1^T @ delta_i+1
-        matrix_mul(&rhs_i,&net->weights[i],&net->outputs[i]);
-        matrix_elem_func(&rhs_i,&rhs_i,relu_d);
-        matrix_elem_mul(&delta_i,&delta_i,&rhs_i);
-
+        matrix_transpose(&w_t,&net->weights[i+1]); //w^T
+        matrix_mul(&delta_i,&w_t,&deltas[i+1]); //w_(i+1)^T @ delta_(i+1)
+        matrix_mul(&rhs_i,&net->weights[i],&net->outputs[i]); //W_i x_(i-1)
+        matrix_elem_func(&rhs_i,&rhs_i,relu_d); //relu
+        matrix_elem_mul(&delta_i,&delta_i,&rhs_i); //W_(i+1)^T delta_(i+1) * relu(W_i x_(i-1))
+        
+        Matrix x_t = matrix_alloc(net->outputs[i].cols,net->outputs[i].rows);
+        matrix_transpose(&x_t,&net->outputs[i]);
+        matrix_mul(&net->d_weights[i],&delta_i,&x_t); //store derivatives
 
         deltas[i] = delta_i;
+        matrix_free(&rhs_i);
+        matrix_free(&w_t);
+        matrix_free(&x_t);
     }
 
     matrix_free(&delta_l);
@@ -117,9 +125,17 @@ void network_backward(Network *net, Matrix* label)
     matrix_free(&x2t);
 }
 
-
-
-void network_train(Network* net, Matrix *input) {
-    network_forward(net,input);
+void network_step(Network *net)
+{
+    //update weights
+    for (int i = 0; i < net->size; ++i) {
+        Matrix weights = net->weights[i];
+        Matrix learn_matrix = matrix_alloc(weights.rows,weights.cols);
+        matrix_scalar_mul(&learn_matrix,LEARNING_RATE,&net->d_weights[i]); //multiply derivatives by learning rate
+        matrix_sub(&net->weights[i],&weights,&learn_matrix);
+        free(&learn_matrix);
+    }
 }
+
+
 

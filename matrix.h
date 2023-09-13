@@ -22,6 +22,6 @@ void matrix_transpose(Matrix *out, Matrix *m);
 void matrix_mse(Matrix *out, Matrix *output, Matrix *label);
 void matrix_set_elem(Matrix *m, int row, int col, float val);
 void matrix_copy(Matrix *out, Matrix *m);
-
+void matrix_scalar_mul(Matrix *out, float scalar, Matrix *m);
 
 #endif

@@ -111,10 +111,11 @@ void matrix_rand(Matrix *out, float low, float high)
 
 void matrix_transpose(Matrix *out, Matrix *m)
 {
-    Matrix m_t = matrix_alloc(m->cols,m->rows);
+    assert(out->cols == m->rows);
+    assert(out->rows == m->cols);
     for (int i = 0; i < m->rows; ++i) {
         for (int j = 0; j < m->cols; ++j) {
-            MAT_IDX(&m_t,j,i) = MAT_IDX(m,i,j);
+            MAT_IDX(out,j,i) = MAT_IDX(m,i,j);
         }
     }
 }
@@ -152,5 +153,14 @@ void matrix_print(Matrix *m)
             printf("%f ",MAT_IDX(m,i,j));
         }
         printf("\n");
+    }
+}
+
+void matrix_scalar_mul(Matrix *out, float scalar, Matrix *m)
+{
+    for (int i = 0; i < out->rows; ++i) {
+        for (int j = 0; j < out->cols; ++j) {
+            MAT_IDX(out,i,j) = MAT_IDX(m,i,j) * scalar;
+        }
     }
 }
