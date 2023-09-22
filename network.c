@@ -54,6 +54,18 @@ void network_free(Network *net)
     }
 }
 
+float network_loss(Network *net, Matrix *label)
+{
+    Matrix output = net->outputs[net->size];
+    assert(output.cols == 1);
+    assert(label->cols == 1);
+    assert(output.rows == label->rows);
+    Matrix out = matrix_alloc(output.rows,output.cols);
+    matrix_sub(&out,&output,label);
+    return matrix_squared_l2_norm(&out);
+}
+
+
 void network_forward(Network *net, Matrix *input)
 {
     printf("Forward pass\n");
@@ -101,11 +113,11 @@ void network_backward(Network *net, Matrix* label)
     Matrix deltas[net->size]; //0,1,2
     deltas[net->size-1] = delta_l;
     for(int i = net->size-2; i >= 0; --i) { //net size = 3, i=1
-        Matrix delta_i = matrix_alloc(net->weights[i+1].rows,1);
+        Matrix delta_i = matrix_alloc(net->weights[i+1].cols,1); //cols
         Matrix rhs_i = matrix_alloc(net->weights[i].rows,1);
         Matrix w_t = matrix_alloc(net->weights[i+1].cols,net->weights[i+1].rows);
         matrix_transpose(&w_t,&net->weights[i+1]); //w^T
-        matrix_mul(&delta_i,&w_t,&deltas[i+1]); //w_(i+1)^T @ delta_(i+1)
+        matrix_mul(&delta_i,&w_t,&deltas[i+1]); //w_(i+1)^T @ delta_(i+1) assert fail
         matrix_mul(&rhs_i,&net->weights[i],&net->outputs[i]); //W_i x_(i-1)
         matrix_elem_func(&rhs_i,&rhs_i,relu_d); //relu
         matrix_elem_mul(&delta_i,&delta_i,&rhs_i); //W_(i+1)^T delta_(i+1) * relu(W_i x_(i-1))
@@ -113,6 +125,8 @@ void network_backward(Network *net, Matrix* label)
         Matrix x_t = matrix_alloc(net->outputs[i].cols,net->outputs[i].rows);
         matrix_transpose(&x_t,&net->outputs[i]);
         matrix_mul(&net->d_weights[i],&delta_i,&x_t); //store derivatives
+        //todo store bias derivatives
+        
 
         deltas[i] = delta_i;
         matrix_free(&rhs_i);
@@ -128,12 +142,13 @@ void network_backward(Network *net, Matrix* label)
 void network_step(Network *net)
 {
     //update weights
+    printf("Updating weights\n");
     for (int i = 0; i < net->size; ++i) {
         Matrix weights = net->weights[i];
         Matrix learn_matrix = matrix_alloc(weights.rows,weights.cols);
         matrix_scalar_mul(&learn_matrix,LEARNING_RATE,&net->d_weights[i]); //multiply derivatives by learning rate
         matrix_sub(&net->weights[i],&weights,&learn_matrix);
-        free(&learn_matrix);
+        matrix_free(&learn_matrix);
     }
 }
 

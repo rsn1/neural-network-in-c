@@ -50,6 +50,13 @@ int main(void)
     matrix_set_elem(&input,3,0,4);
     printf("Input: \n");
     matrix_print(&input);
+    Matrix label = matrix_alloc(4,1);
+    matrix_set_elem(&label,0,0,1);
+    matrix_set_elem(&label,1,0,4);
+    matrix_set_elem(&label,2,0,9);
+    matrix_set_elem(&label,3,0,16);
+    printf("Output: \n");
+    matrix_print(&label);
     
     network_forward(&net,&input);
     printf("First weight matrix: \n");
@@ -70,8 +77,13 @@ int main(void)
     matrix_set_elem(&labels,0,0,1);
     matrix_set_elem(&labels,1,0,2);
 
+    //calculate derivatives
     network_backward(&net,&labels);
-    // network_free(&net);
+
+    //update weights
+    network_step(&net);
+    
+    network_free(&net);
     return 0;
 }
 

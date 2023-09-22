@@ -134,10 +134,15 @@ void matrix_mse(Matrix *out, Matrix *output, Matrix *label)
     }
 }
 
-void mse_d(Matrix *a, Matrix *b) 
+float matrix_squared_l2_norm(Matrix *m) 
 {
-
-	
+    //make sure it's a column vector
+    assert(m->cols == 1);
+    float sum = 0;
+    for (int i = 0; i < m->rows; ++i) {
+        sum += powf(MAT_IDX(m,i,0),2);
+    }
+    return sum;
 }
 
 

@@ -16,5 +16,6 @@ void network_forward(Network *net, Matrix *input);
 void network_free(Network *net);
 void network_backward(Network *net, Matrix *label);
 void network_step(Network *net);
+float network_loss(Network *net, Matrix *label);
 
 #endif
